@@ -86,7 +86,7 @@ const Navbar = () => {
                   handleScrollNavigation(link.id);
                 }}
               >
-                <a>{link.title}</a>
+                <Link to={link.ref}>{link.title}</Link>
               </li>
             ))}
           </ul>
@@ -95,10 +95,10 @@ const Navbar = () => {
           <SearchBar />
         </div>
 
-        <div className="">
-          <button className="mobile-btn-login">
+        <div className="mobile-btn-login">
+          <Link to={"/login"} className="">
             <FaUser className="text-2xl" />
-          </button>
+          </Link>
         </div>
       </nav>
     </div>
