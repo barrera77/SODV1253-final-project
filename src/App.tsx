@@ -7,6 +7,7 @@ import PortfolioPage from "./pages/PortfolioPage";
 import WatchListPage from "./pages/WatchListPage";
 import StockDetailsPage from "./pages/StockDetailsPage";
 import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/watchlist" element={<WatchListPage />} />
           <Route path="/details" element={<StockDetailsPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
         </Routes>
       </Layout>
     </>

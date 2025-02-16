@@ -19,7 +19,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar-wrapper">
+    <div className="navbar-wrapper bg-[#F9FAFBE6]">
       <nav className="flex justify-between items-center w-full md:w-[95%] m-auto">
         {/* mobile view */}
         <div className="xl:hidden">
@@ -96,7 +96,7 @@ const Navbar = () => {
         </div>
 
         <div className="mobile-btn-login">
-          <Link to={"/login"} className="">
+          <Link to={"/signup"} className="">
             <FaUser className="text-2xl" />
           </Link>
         </div>
