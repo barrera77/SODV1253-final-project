@@ -13,7 +13,7 @@ const Layout = ({ children }: LayoutProps) => {
         <Navbar />
       </div>
       <main className="relative">{children}</main>
-      <div className="absolute left-0 w-full bottom-0 bg-amber-200">
+      <div className="absolute left-0 w-full bottom-0 ">
         <Footer />
       </div>
     </>
