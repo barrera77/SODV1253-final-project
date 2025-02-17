@@ -21,13 +21,13 @@ const LoginPage = () => {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
-    console.log("Form submitted with:", email, password); // ✅ Debugging step
+    console.log("Form submitted with:", email, password);
 
     if (login) {
-      console.log("Logging in..."); // ✅ Debugging step
+      console.log("Logging in...");
       await signIn(email, password);
     } else {
-      console.log("Signing up..."); // ✅ Debugging step
+      console.log("Signing up...");
       await signUp(email, password);
     }
   };
@@ -50,7 +50,7 @@ const LoginPage = () => {
               </h2>
 
               <div className="flex justify-center">
-                <button className="flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
+                <button className="btn flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
                   <FaGoogle className="text-xl" />
                   <span className="text-sm">Sign up with Google</span>
                 </button>
@@ -121,7 +121,7 @@ const LoginPage = () => {
 
                 <button
                   onClick={() => setLogin(true)}
-                  className="w-full border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  className="cursor-pointer w-full border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Sign in
                 </button>

@@ -3,12 +3,15 @@ import { mobileStockLogo, stockMarketLogo } from "../assets";
 import { navlinks } from "../constants";
 import SearchBar from "./SearchBar";
 import { Link } from "react-router-dom";
-import { FaUser, FaWindowClose, FaBars } from "react-icons/fa";
+import { FaUser, FaWindowClose, FaBars, FaSignOutAlt } from "react-icons/fa";
+import useAuth from "../hooks/useAuth";
 
 const Navbar = () => {
   const [activeLink, setActiveLink] = useState("");
   const [active, setActive] = useState("");
   const [toggle, setToggle] = useState(false);
+
+  const { user, logout } = useAuth();
 
   const handleScrollNavigation = (id: string) => {
     const pageSection = document.getElementById(id);
@@ -96,9 +99,15 @@ const Navbar = () => {
         </div>
 
         <div className="mobile-btn-login">
-          <Link to={"/login"} className="">
-            <FaUser className="text-2xl" />
-          </Link>
+          {user ? (
+            <button onClick={logout} className="cursor-pointer">
+              <FaSignOutAlt className="text-xl" />
+            </button>
+          ) : (
+            <Link to={"/login"} className="">
+              <FaUser className="text-2xl" />
+            </Link>
+          )}
         </div>
       </nav>
     </div>

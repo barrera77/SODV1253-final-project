@@ -23,7 +23,7 @@ const SearchBar = () => {
         />
         <button
           type="submit"
-          className="xs:hidden xl:block btn-search focus:ring-[#0b022d] text-sm px-4 "
+          className="btn xs:hidden xl:block btn-search focus:ring-[#0b022d] text-sm px-5 py-[.6em] "
         >
           Search
         </button>
