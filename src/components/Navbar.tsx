@@ -96,7 +96,7 @@ const Navbar = () => {
         </div>
 
         <div className="mobile-btn-login">
-          <Link to={"/signup"} className="">
+          <Link to={"/login"} className="">
             <FaUser className="text-2xl" />
           </Link>
         </div>

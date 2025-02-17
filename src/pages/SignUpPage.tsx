@@ -1,9 +1,72 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { stockMarketLogo } from "../assets";
-import { auth } from "../Services/fireBaseConfig";
+
 import { FaFacebook, FaGoogle } from "react-icons/fa";
+import React, { useState } from "react";
+import { signUp } from "../Services/authService";
+
+interface UserRegistration {
+  email: string;
+  password: string;
+  name: string;
+}
 
 const SignUpPage = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
+  const [errors, setErrors] = useState<{
+    emailError?: string;
+    passwordError?: string;
+    passwordConfirmationError?: string;
+  }>({});
+  const navigate = useNavigate();
+
+  const validateForm = (): boolean => {
+    let isValid = true;
+    const errorsList: typeof errors = {};
+
+    if (password.length < 6) {
+      errorsList.passwordError = "Password must be at least 6 characters long";
+      isValid = false;
+      console.log("invalid password error");
+    }
+    if (password !== passwordConfirmation) {
+      errorsList.passwordConfirmationError = "Passwords do not match";
+      isValid = false;
+      console.log("passwords dont match error");
+    }
+    setErrors(errorsList);
+
+    return isValid;
+  };
+
+  const handleSignUp = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    const user: UserRegistration = {
+      email,
+      password,
+      name,
+    };
+
+    try {
+      const userCredentials = await signUp(user);
+      if (!userCredentials) {
+        setErrors({ emailError: "Failed to sign up. Please check details" });
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      setErrors({ emailError: "Sign-up error. Try again." });
+    }
+  };
+
   return (
     <>
       <section className="w-full md:container m-auto mt-[15%] md:mt-[10%] xl:mt-[5%]">
@@ -21,22 +84,22 @@ const SignUpPage = () => {
                 Create an Account
               </h2>
 
-              <div className="flex md:justify-between md:flex-row flex-col gap-3">
+              <div className="flex justify-center">
                 <button className="flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
                   <FaGoogle className="text-xl" />
-                  <span className="text-sm">Sing up with Google</span>
+                  <span className="text-sm">Sign up with Google</span>
                 </button>
-                <button className="flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
+                {/*   <button className="flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
                   <FaFacebook className="text-xl" />
-                  <span className="text-sm">Sing up with Facebook</span>
-                </button>
+                  <span className="text-sm">Sign up with Facebook</span>
+                </button> */}
               </div>
               <div className="flex items-center gap-2">
                 <div className="border-b w-[45%]"></div>
                 <div className="">or</div>
                 <div className="border-b w-[45%]"></div>
               </div>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form className="space-y-4 md:space-y-6" onSubmit={handleSignUp}>
                 <div>
                   <label
                     htmlFor="name"
@@ -49,7 +112,9 @@ const SignUpPage = () => {
                     name="name"
                     id="name"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="name & last name"
+                    placeholder="Full name"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
                     required
                   />
                 </div>
@@ -66,8 +131,12 @@ const SignUpPage = () => {
                     id="email"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="name@company.com"
-                    required
+                    value={email}
+                    onChange={(event) => setEmail(event?.target.value)} // Call on change                    required
                   />
+                  {errors.emailError && (
+                    <p className="error-text">{errors.emailError}</p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -82,8 +151,13 @@ const SignUpPage = () => {
                     id="password"
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
                     required
                   />
+                  {errors.passwordError && (
+                    <p className="error-text">{errors.passwordError}</p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -98,8 +172,17 @@ const SignUpPage = () => {
                     id="confirm-password"
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    value={passwordConfirmation}
+                    onChange={(event) =>
+                      setPasswordConfirmation(event.target.value)
+                    }
                     required
                   />
+                  {errors.passwordConfirmationError && (
+                    <p className="error-text">
+                      {errors.passwordConfirmationError}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-start">
                   <div className="flex items-center h-5">

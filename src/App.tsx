@@ -8,21 +8,24 @@ import WatchListPage from "./pages/WatchListPage";
 import StockDetailsPage from "./pages/StockDetailsPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
+import { AuthProvider } from "./hooks/useAuth";
 
 function App() {
   return (
     <>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
-          <Route path="/watchlist" element={<WatchListPage />} />
-          <Route path="/details" element={<StockDetailsPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-        </Routes>
-      </Layout>
+      <AuthProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/portfolio" element={<PortfolioPage />} />
+            <Route path="/watchlist" element={<WatchListPage />} />
+            <Route path="/details" element={<StockDetailsPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+          </Routes>
+        </Layout>
+      </AuthProvider>
     </>
   );
 }

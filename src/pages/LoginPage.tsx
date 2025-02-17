@@ -1,9 +1,37 @@
 import { Link } from "react-router-dom";
 import { stockMarketLogo } from "../assets";
-import { auth } from "../Services/fireBaseConfig";
-import { FaFacebook, FaGoogle } from "react-icons/fa";
+import useAuth from "../hooks/useAuth";
+import { FaGoogle } from "react-icons/fa";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+
+interface Inputs {
+  email: string;
+  password: string;
+}
 
 const LoginPage = () => {
+  const [login, setLogin] = useState(false);
+  const { signIn, signUp } = useAuth();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>();
+
+  const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
+    console.log("Form submitted with:", email, password); // ✅ Debugging step
+
+    if (login) {
+      console.log("Logging in..."); // ✅ Debugging step
+      await signIn(email, password);
+    } else {
+      console.log("Signing up..."); // ✅ Debugging step
+      await signUp(email, password);
+    }
+  };
+
   return (
     <>
       <section className="w-full md:container m-auto">
@@ -21,22 +49,25 @@ const LoginPage = () => {
                 Sign in
               </h2>
 
-              <div className="flex md:justify-between md:flex-row flex-col gap-3">
+              <div className="flex justify-center">
                 <button className="flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
                   <FaGoogle className="text-xl" />
-                  <span className="text-sm">Sing in with Google</span>
+                  <span className="text-sm">Sign up with Google</span>
                 </button>
-                <button className="flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
-                  <FaFacebook className="text-xl" />
-                  <span className="text-sm">Sing in with Facebook</span>
-                </button>
+                {/*   <button className="flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
+                                <FaFacebook className="text-xl" />
+                                <span className="text-sm">Sign up with Facebook</span>
+                              </button> */}
               </div>
               <div className="flex items-center gap-2">
                 <div className="border-b w-[45%]"></div>
                 <div className="">or</div>
                 <div className="border-b w-[45%]"></div>
               </div>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form
+                className="space-y-4 md:space-y-6"
+                onSubmit={handleSubmit(onSubmit)}
+              >
                 <div>
                   <label
                     htmlFor="email"
@@ -46,12 +77,16 @@ const LoginPage = () => {
                   </label>
                   <input
                     type="email"
-                    name="email"
                     id="email"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="name@company.com"
-                    required
+                    {...register("email", { required: true })}
                   />
+                  {errors.email && (
+                    <p className="p-1 text-[13px] font-light  text-orange-500">
+                      Please enter a valid email.
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -62,28 +97,43 @@ const LoginPage = () => {
                   </label>
                   <input
                     type="password"
-                    name="password"
                     id="password"
-                    placeholder="••••••••"
+                    placeholder="*******"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: {
+                        value: 4,
+                        message: "Password must be at least 4 characters long",
+                      },
+                      maxLength: {
+                        value: 60,
+                        message: "Password must not exceed 60 characters",
+                      },
+                    })}
                   />
+                  {errors.password && (
+                    <p className="p-1 text-[13px] font-light text-orange-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
 
                 <button
-                  type="submit"
+                  onClick={() => setLogin(true)}
                   className="w-full border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Sign in
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  Dom't have an account?{" "}
-                  <Link
-                    to="/signup"
+                  Don't have an account?{" "}
+                  <button
+                    type="submit"
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    onClick={() => setLogin(false)}
                   >
-                    Sign up here
-                  </Link>
+                    Sign up now
+                  </button>
                 </p>
               </form>
             </div>
