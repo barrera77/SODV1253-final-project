@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const userCredential = await signInWithPopup(auth, googleProvider);
       setUser(userCredential.user);
-      navigate("/"); // Redirect to home page after login
+      navigate("/dashboard"); // Redirect to home page after login
     } catch (error) {
       console.error("Google Sign-In Error:", error);
       setError("An unexpected error occurred");
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setUser(userCredential.user);
-        navigate("/");
+        navigate("/dashboard");
       })
       .catch((error) => setError(error.message))
       .finally(() => setLoading(false));
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setUser(userCredential.user);
-        navigate("/");
+        navigate("/dashboard");
       })
       .catch((error) => setError(error.message))
       .finally(() => setLoading(false));

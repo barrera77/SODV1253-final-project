@@ -17,7 +17,7 @@ const SearchBar = () => {
           value={searchQuery}
           onChange={handleSearchInput}
           id="default-search"
-          className="block w-[100%] p-4 sm:py-3 xl:ps-10 text-sm text-gray-900 border border-gray-300 sm:rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
+          className="block w-[100%] bg-[#fff] p-4 sm:py-3 xl:ps-10 text-sm text-gray-900 border border-gray-300 sm:rounded-lg focus:ring-blue-500 focus:border-blue-500 "
           placeholder="Search Stocks..."
           required
         />
