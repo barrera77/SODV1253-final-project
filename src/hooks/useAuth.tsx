@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   User,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
@@ -35,9 +37,11 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
   const navigate = useNavigate();
+
+  const googleProvider = new GoogleAuthProvider();
 
   // Persisting the user
   useEffect(() => {
@@ -57,6 +61,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return () => unsubscribe();
   }, []);
+
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      setUser(userCredential.user);
+      navigate("/"); // Redirect to home page after login
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      setError("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const signUp = async (email: string, password: string) => {
     setLoading(true);
@@ -101,6 +121,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       user,
       signUp,
       signIn,
+      signInWithGoogle,
       loading,
       logout,
       error,

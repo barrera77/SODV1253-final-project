@@ -12,7 +12,7 @@ interface Inputs {
 
 const LoginPage = () => {
   const [login, setLogin] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, signInWithGoogle } = useAuth();
 
   const {
     register,
@@ -50,9 +50,12 @@ const LoginPage = () => {
               </h2>
 
               <div className="flex justify-center">
-                <button className="btn flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
+                <button
+                  onClick={signInWithGoogle}
+                  className="btn flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]"
+                >
                   <FaGoogle className="text-xl" />
-                  <span className="text-sm">Sign up with Google</span>
+                  <span className="text-sm">Sign in with Google</span>
                 </button>
                 {/*   <button className="flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]">
                                 <FaFacebook className="text-xl" />
@@ -129,7 +132,7 @@ const LoginPage = () => {
                   Don't have an account?{" "}
                   <button
                     type="submit"
-                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    className="font-medium text-primary-600 hover:underline dark:text-primary-500 cursor-pointer"
                     onClick={() => setLogin(false)}
                   >
                     Sign up now
