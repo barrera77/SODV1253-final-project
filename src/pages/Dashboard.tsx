@@ -105,11 +105,11 @@ const Dashboard = () => {
       ? text.substring(0, maxLength) + "..."
       : text;
   };
-
+  /* 
   useEffect(() => {
     getTopGainers();
     getTopLosers();
-  }, []);
+  }, []); */
 
   return (
     <>
@@ -239,9 +239,9 @@ const Dashboard = () => {
                     </thead>
                     <tbody>
                       {searchResults && searchResults.length > 0 ? (
-                        searchResults.map((result) => (
+                        searchResults.map((result, index) => (
                           <tr
-                            key={result.symbol}
+                            key={`${result.symbol}-${index}`}
                             className="border-b border-slate-200"
                           >
                             <td className="p-2 ">{result.symbol || "N/A"}</td>
@@ -250,7 +250,7 @@ const Dashboard = () => {
                             <td className="p-2">{result.exchDisp || "N/A"}</td>
                             <td className="flex justify-center pt-2">
                               <Link
-                                to={`/details/${result.symbol}`}
+                                to={`/details/${result.symbol}/${result.exchDisp}`}
                                 className="text-center hover:text-blue-500"
                               >
                                 <FaBinoculars className="text-xl " />
