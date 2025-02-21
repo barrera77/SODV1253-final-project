@@ -1,25 +1,30 @@
-import { FaArrowUp, FaBinoculars, FaChevronUp, FaUser } from "react-icons/fa";
+import { FaBinoculars, FaChevronUp, FaUser } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 import { fetchData } from "../Services/api-client";
 import { Link } from "react-router-dom";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../Services/fireBaseConfig";
 
 const GAINERS_END_POINT = "v1/markets/screener?list=day_gainers";
-const LOSERS_END_POINT = "v1/markets/screener?list=day_losers ";
+const LOSERS_END_POINT = "v1/markets/screener?list=day_losers";
 
 interface Stock {
   region: string;
   symbol: string;
+  fullExchangeName: string;
   longName: string;
   shortName: string;
   displayName: string;
+  currency: string;
   regularMarketPrice: number;
   exchangeTimezoneShortName: string;
   regularMarketTime: number;
   regularMarketDayHigh: number;
   regularMarketChange: number;
   regularMarketChangePercent: number;
+  regularMarketPreviousClose: number;
 }
 
 interface SearchItem {
@@ -35,6 +40,7 @@ const Dashboard = () => {
   const [gainers, setGainers] = useState<Stock[]>([]);
   const [losers, setLosers] = useState<Stock[]>([]);
   const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
+  const [watchlist, setWatchlist] = useState<Stock[]>([]);
 
   const { user } = useAuth();
 
@@ -99,14 +105,45 @@ const Dashboard = () => {
     }
   };
 
+  const formatTime = (epochTime?: number, timeZone?: string) => {
+    if (!epochTime) {
+      return "N/A";
+    }
+
+    return new Date(epochTime * 1000).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: timeZone || "America/New_York",
+      timeZoneName: "short",
+      hour12: true,
+    });
+  };
+
   const truncateText = (text: string, maxLength: number = 20) => {
     if (!text) return "N/A"; // Handle empty names
     return text.length > maxLength
       ? text.substring(0, maxLength) + "..."
       : text;
   };
-  /* 
+
   useEffect(() => {
+    if (!user || !user.uid) return;
+
+    const watchlistRef = doc(db, "watchlists", user.uid);
+
+    const unsubscribe = onSnapshot(watchlistRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setWatchlist(docSnap.data().stocks || []);
+      } else {
+        setWatchlist([]);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  /*   useEffect(() => {
     getTopGainers();
     getTopLosers();
   }, []); */
@@ -114,7 +151,8 @@ const Dashboard = () => {
   return (
     <>
       <div className="container m-auto mt-[5%]">
-        <div className="w-[60%] flex items-center justify-between py-5 mb-2">
+        <h2 className="text-start font-semibold text-xl">Dashboard</h2>
+        <div className="w-[75%] flex items-center justify-between py-5 mb-2">
           <div className="flex gap-3">
             <FaUser className="text-xl" />
             {user ? <h2>{user.email}</h2> : <h2></h2>}
@@ -131,24 +169,54 @@ const Dashboard = () => {
         <div>
           <div className="flex gap-[3%]">
             <div className="w-[75%]">
-              <div className="mb-5 w-[80%] border p-[1rem]">
+              <div className="mb-5 w-[90%] border p-[1rem]">
                 <h2 className="text-start font-semibold mb-3">Watchlist</h2>
                 <div>
                   <table className="table-fixed text-start text-sm bg-[#fff] w-full">
                     <thead className="border-b border-gray-200">
                       <tr>
-                        <th className="text-start p-2">Stock</th>
+                        <th className="text-start p-2">
+                          <Link to="">Symbol</Link>
+                        </th>
+                        <th className="text-start p-2">Currency</th>
                         <th className="text-start p-2">Price</th>
                         <th className="text-start p-2">Last</th>
                         <th className="text-start p-2">Change</th>
-                        <th className="text-start p-2">Volume</th>
+                        <th className="text-start p-2">Change(%)</th>
+                        <th className="text-start p-2">Market Time</th>
+                        <th className="text-start p-2"></th>
                       </tr>
                     </thead>
+                    <tbody>
+                      {watchlist.length === 0 ? (
+                        <tr>
+                          <td>No stocks in your watchlist yet.</td>
+                        </tr>
+                      ) : (
+                        watchlist.map((stock, index) => (
+                          <tr key={`${stock.symbol}-${index}`}>
+                            <td className="p-2">{stock.symbol}</td>
+                            <td className="p-2">{stock.currency}</td>
+                            <td className="p-2">{stock.regularMarketPrice}</td>
+                            <td className="p-2">
+                              {stock.regularMarketPreviousClose}
+                            </td>
+                            <td className="p-2">{stock.regularMarketChange}</td>
+                            <td className="p-2">
+                              {stock.regularMarketChangePercent}
+                            </td>
+                            <td className="p-2">
+                              {formatTime(stock.regularMarketTime)}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
                   </table>
                 </div>
               </div>
 
-              <div className="flex gap-3 w-[80%]">
+              <div className="flex gap-3 w-[90%]">
                 <div className="p-[1rem] border w-[50%]">
                   <h2 className="text-start font-semibold mb-3">
                     America Stock Market
@@ -222,7 +290,7 @@ const Dashboard = () => {
               </div>
 
               {/* Search Results */}
-              <div className="mt-5 w-[80%]">
+              <div className="mt-5 w-[90%]">
                 <div className="border p-[1rem]">
                   <h2 className="text-start font-semibold mb-3">
                     Stock Search Results
@@ -244,13 +312,13 @@ const Dashboard = () => {
                             key={`${result.symbol}-${index}`}
                             className="border-b border-slate-200"
                           >
-                            <td className="p-2 ">{result.symbol || "N/A"}</td>
+                            <td className="p-2">{result.symbol || "N/A"}</td>
                             <td className="p-2">{result.name || "Unknown"}</td>
                             <td className="p-2">{result.typeDisp || "N/A"}</td>
                             <td className="p-2">{result.exchDisp || "N/A"}</td>
                             <td className="flex justify-center pt-2">
                               <Link
-                                to={`/details/${result.symbol}/${result.exchDisp}`}
+                                to={`/details/${result.symbol}`}
                                 className="text-center hover:text-blue-500"
                               >
                                 <FaBinoculars className="text-xl " />
@@ -311,12 +379,12 @@ const Dashboard = () => {
                       className="text-sm py-1 border-b border-dashed"
                     >
                       <div className="flex justify-between">
-                        <a
-                          href=""
+                        <Link
+                          to={`/details/${stock.symbol}`}
                           className="text-blue-500 text-sm hover:underline"
                         >
                           {stock.symbol}
-                        </a>
+                        </Link>
                         <span>{stock.regularMarketPrice}</span>
                       </div>
                       <div className="flex justify-between text-[12px]">
@@ -345,12 +413,12 @@ const Dashboard = () => {
                       className="text-sm py-1 border-b border-dashed"
                     >
                       <div className="flex justify-between">
-                        <a
-                          href=""
+                        <Link
+                          to={`/details/${stock.symbol}`}
                           className="text-blue-500 text-sm hover:underline"
                         >
                           {stock.symbol}
-                        </a>
+                        </Link>
                         <span>{stock.regularMarketPrice}</span>
                       </div>
                       <div className="flex justify-between text-[12px]">

@@ -1,12 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-const TradingViewChart = ({
-  symbol,
-  exchDisp,
-}: {
-  symbol: string;
-  exchDisp: string;
-}) => {
+const TradingViewChart = ({ symbol }: { symbol: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,11 +18,11 @@ const TradingViewChart = ({
         {
           "symbols": [
             [
-              "${exchDisp}:${symbol}|1D"
+              "${symbol}"
             ]
           ],
           "chartOnly": false,
-          "width": "75%",
+          "width": "100%",
           "height": "500",
           "locale": "en",
           "colorTheme": "light",

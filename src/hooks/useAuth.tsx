@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // User is not logged in
         setUser(null);
         setLoading(true);
-        navigate("/login");
+        navigate("/");
       }
       setInitialLoading(false);
     });
@@ -111,7 +111,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signOut(auth)
       .then(() => {
         setUser(null);
-        navigate("/login");
+        navigate("/");
       })
       .catch((error) => setError(error.message))
       .finally(() => setLoading(false));

@@ -21,10 +21,7 @@ function App() {
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
             <Route path="/watchlist" element={<WatchListPage />} />
-            <Route
-              path="/details/:symbol/:exchDisp"
-              element={<StockDetailsPage />}
-            />
+            <Route path="/details/:symbol" element={<StockDetailsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/dashboard" element={<Dashboard />} />

@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { fetchData } from "../Services/api-client";
-import { FaArrowLeft, FaMoon, FaPlusCircle } from "react-icons/fa";
+import useAuth from "../hooks/useAuth";
+import { addToWatchlist } from "../Services/watchListService";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { fetchData, fetchDataInRealTime } from "../Services/api-client";
+import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 import TradingViewChart from "../components/TradingViewWidget";
 
 interface StockDetails {
@@ -23,15 +25,36 @@ interface StockDetails {
   postMarketChange: number;
   postMarketChangePercent: number;
   postMarketTime: number;
+  regularMarketChange: number;
+  regularMarketChangePercent: number;
+  regularMarketTime: number;
+}
+
+interface NewsItem {
+  link: string;
+  publisher: string;
+  title: string;
+  id: string;
+  url: string;
+  pubtime: number;
+  images?: {
+    original?: {
+      url: string;
+      height: number;
+      width: number;
+    };
+  };
 }
 
 const StockDetailsPage = () => {
+  const { user } = useAuth();
+
   const [stockDetails, setStockDetails] = useState<StockDetails | null>(null);
+  const [news, setNews] = useState<NewsItem[]>([]);
   const [error, setError] = useState("");
 
-  const { symbol, exchDisp } = useParams<{
+  const { symbol } = useParams<{
     symbol: string | undefined;
-    exchDisp?: string | undefined;
   }>();
 
   const navigate = useNavigate();
@@ -62,12 +85,47 @@ const StockDetailsPage = () => {
       setError("No data available");
       return;
     }
-    console.log("details: ", data[0]);
     setStockDetails(data[0]);
+  };
+
+  const getStockNews = async () => {
+    if (!symbol) {
+      return;
+    }
+    const data = await fetchDataInRealTime(
+      `get-list?lang=en-US&region=US&symbol=${symbol}`
+    );
+
+    if (!data || data.length === 0) {
+      setError("No data available");
+      return;
+    }
+    console.log(data);
+    setNews(data as NewsItem[]);
+  };
+
+  const handleAddToWatchList = async () => {
+    if (!user || !stockDetails) {
+      return;
+    }
+
+    await addToWatchlist(user.uid, {
+      symbol: stockDetails.symbol,
+      shortName: stockDetails.shortName,
+      currency: stockDetails.currency,
+      regularMarketPrice: stockDetails.regularMarketChange,
+      regularMarketPreviousClose: stockDetails.regularMarketPreviousClose,
+      regularMarketChange: stockDetails.regularMarketChange,
+      regularMarketChangePercent: stockDetails.regularMarketChangePercent,
+      regularMarketTime: stockDetails.regularMarketTime,
+    });
+
+    alert("symbol Added succesfully!");
   };
 
   useEffect(() => {
     getstockDetails();
+    getStockNews();
   }, [symbol]);
 
   return (
@@ -89,96 +147,116 @@ const StockDetailsPage = () => {
             </h2>
             <div className="flex gap-3 text-start text-[13px] items-center">
               <span>{stockDetails?.fullExchangeName}</span>-
-              <span>{stockDetails?.quoteSourceName}</span>•
-              <span>{stockDetails?.currency}</span>
+              <span>{stockDetails?.quoteSourceName}</span>
             </div>
           </div>
-          <button className="btn flex gap-3">
+          <button onClick={handleAddToWatchList} className="btn flex gap-3">
             <FaPlusCircle className="text-2xl" />
-            Add
+            Add to watchlist
           </button>
         </div>
-        <div>
-          <div>
-            <div className="flex gap-3 mt-3 font-semibold items-center">
-              <span>{stockDetails?.postMarketPrice}</span>
-              <span
-                className={`base-class ${
-                  stockDetails?.postMarketChange ?? 0 < 0
-                    ? "text-red-600"
-                    : "text-green-600"
-                } text-[14px]`}
-              >
-                {stockDetails?.postMarketChange}
-              </span>
-              <span
-                className={`base-class ${
-                  stockDetails?.postMarketChange ?? 0 < 0
-                    ? "text-red-600"
-                    : "text-green-600"
-                } text-[14px]`}
-              >
-                ({stockDetails?.postMarketChangePercent}%)
-              </span>
+        <div className="flex">
+          <div className="w-[70%]">
+            <div className="">
+              {stockDetails?.symbol ? (
+                <TradingViewChart
+                  key={stockDetails.symbol}
+                  symbol={stockDetails.symbol}
+                />
+              ) : (
+                <p>Loading chart...</p>
+              )}
             </div>
-            <div className="flex gap-3 items-center text-[13px]">
-              <span>After Hours: </span>
-              <span>{formatTime(stockDetails?.postMarketTime)}</span>
-              <FaMoon />
+
+            <div className="mt-4">
+              <div className="border-b border-slate-200">
+                <h2 className="text-start font-semibold px-3">Key Data</h2>
+              </div>
+              <div className="p-3 text-[14px]">
+                <div className="data-row">
+                  <span>Share Volume</span>
+                  <span>{stockDetails?.regularMarketVolume}</span>
+                </div>
+                <div className="data-row">
+                  <span>Average Volume</span>
+                  <span>{stockDetails?.averageDailyVolume3Month}</span>
+                </div>
+                <div className="data-row">
+                  <span>Previous Close</span>
+                  <span>${stockDetails?.regularMarketPreviousClose}</span>
+                </div>
+                <div className="data-row">
+                  <span>Open</span>
+                  <span>${stockDetails?.regularMarketOpen}</span>
+                </div>
+                <div className="data-row">
+                  <span>52 Week High/Low</span>
+                  <span>${stockDetails?.fiftyTwoWeekLow}</span>
+                </div>
+                <div className="data-row">
+                  <span>Market Cap</span>
+                  <span>{stockDetails?.marketCap}</span>
+                </div>
+                <div className="data-row">
+                  <span>Earnings per Share (EPS)</span>
+                  <span>{stockDetails?.epsCurrentYear}</span>
+                </div>
+                <div className="data-row">
+                  <span>Fowrward P/E 1 yr.</span>
+                  <span>{stockDetails?.forwardPE || "Unknown"}</span>
+                </div>
+                <div className="data-row">
+                  <span>Ex Dividend Date</span>
+                  <span>{stockDetails?.dividendDate || "Unknown"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
             </div>
           </div>
-          <div>
-            {stockDetails?.symbol ? (
-              <TradingViewChart
-                key={stockDetails.symbol}
-                symbol={stockDetails.symbol}
-                exchDisp={exchDisp ?? ""}
-              />
-            ) : (
-              <p>Loading chart...</p>
-            )}
-          </div>
-          <div>
-            <h2 className="text-start font-semibold my-3">Key Data</h2>
-            <div className="flex justify-between">
-              <span>Share Volume</span>
-              <span>{stockDetails?.regularMarketVolume}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Average Volume</span>
-              <span>{stockDetails?.averageDailyVolume3Month}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Previous Close</span>
-              <span>${stockDetails?.regularMarketPreviousClose}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Open</span>
-              <span>${stockDetails?.regularMarketOpen}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>52 Week High/Low</span>
-              <span>${stockDetails?.fiftyTwoWeekLow}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Market Cap</span>
-              <span>{stockDetails?.marketCap}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Earnings per Share (EPS)</span>
-              <span>{stockDetails?.epsCurrentYear}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Fowrward P/E 1 yr.</span>
-              <span>{stockDetails?.forwardPE}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Ex Dividend Date</span>
-              <span>{stockDetails?.dividendDate}</span>
-            </div>
-            <div className="flex justify-between">
-              <span></span>
-              <span></span>
+
+          <div className="w-[30%] text-start">
+            <h2 className="text-start font-semibold pt-4 px-4">News</h2>
+            <div className="max-h-[800px] overflow-y-scroll p-4">
+              {news && news.length > 0 ? (
+                news.map((article) => (
+                  <div
+                    key={article.id}
+                    className="flex gap-2 py-3 border-b border-slate-200"
+                  >
+                    <div className="w-[80%]">
+                      <Link
+                        to={article.url}
+                        target="blank"
+                        className="hover:text-blue-500"
+                      >
+                        <span className="text-[14px] font-semibold">
+                          {article.title}
+                        </span>
+                      </Link>
+                      <div className="flex gap-3 text-[13px] pt-2">
+                        <span>{article.publisher}</span>•
+                        <span>{formatTime(article.pubtime)}</span>
+                      </div>
+                    </div>
+                    <div className="w-[20%]">
+                      {article.images?.original?.url && (
+                        <img
+                          src={article.images.original.url}
+                          alt="News Thumbnail"
+                          className="w-full h-full bg-cover"
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div>
+                  <span>No news Found</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
