@@ -7,7 +7,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
-import { db } from "../Services/fireBaseConfig";
+import { db } from "./fireBaseConfig";
 
 export const addToWatchlist = async (
   userId: string,

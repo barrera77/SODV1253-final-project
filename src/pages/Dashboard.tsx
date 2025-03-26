@@ -2,10 +2,10 @@ import { FaBinoculars, FaChevronUp, FaUser } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { useState, useEffect } from "react";
-import { fetchData } from "../Services/api-client";
+import { fetchData } from "../services/api-client";
 import { Link } from "react-router-dom";
 import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../Services/fireBaseConfig";
+import { db } from "../services/fireBaseConfig";
 
 const GAINERS_END_POINT = "v1/markets/screener?list=day_gainers";
 const LOSERS_END_POINT = "v1/markets/screener?list=day_losers";
@@ -84,6 +84,8 @@ const Dashboard = () => {
   const getSearchResults = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    console.log("getSearchResults called");
+
     if (!searchQuery.trim()) {
       setError("Search query cannot be empty");
       return;
@@ -92,8 +94,15 @@ const Dashboard = () => {
     try {
       const data = await fetchData(`v1/markets/search?search=${searchQuery}`);
 
+      if (!Array.isArray(data)) {
+        setError("Unexpected data format");
+        console.log("Unexpected data:", data);
+        return;
+      }
+
       if (!data || data.length === 0) {
         setError("No data available");
+        console.log(error);
         return;
       }
 
@@ -143,10 +152,10 @@ const Dashboard = () => {
     return () => unsubscribe();
   }, [user]);
 
-  /*   useEffect(() => {
-    getTopGainers();
-    getTopLosers();
-  }, []); */
+  useEffect(() => {
+    //getTopGainers();
+    //getTopLosers();
+  }, []);
 
   return (
     <>
@@ -360,7 +369,10 @@ const Dashboard = () => {
                       required
                       className="w-full p-4 sm:py-3 xl:ps-2 text-sm rounded-lg border border-gray-300 bg-[#fff]"
                     />
-                    <button className="btn border border-[#0b022d] bg-[#0b022d] text-[#fff] ">
+                    <button
+                      type="submit"
+                      className="btn border border-[#0b022d] bg-[#0b022d] text-[#fff]"
+                    >
                       Search
                     </button>
                   </form>

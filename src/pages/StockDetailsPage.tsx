@@ -1,8 +1,8 @@
 import useAuth from "../hooks/useAuth";
-import { addToWatchlist } from "../Services/watchListService";
+import { addToWatchlist } from "../services/watchListService";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { fetchData, fetchDataInRealTime } from "../Services/api-client";
+import { fetchData, fetchDataInRealTime } from "../services/api-client";
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 import TradingViewChart from "../components/TradingViewWidget";
 

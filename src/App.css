@@ -135,3 +135,44 @@ html {
   border-bottom: 1px solid #e2e8f0;
   padding: 5px 0;
 }
+
+.announcements {
+  background-color: var(--black);
+  color: var(--white);
+  text-align: center;
+  padding: 0.5rem 0 1.5rem 0;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+/* announcements scroll animation */
+.announcements p {
+  display: inline-block;
+  margin-left: 150px;
+  color: var(--white);
+}
+
+.announcements:hover {
+  animation-play-state: paused;
+}
+
+.announcements-content {
+  display: flex;
+  gap: 10px;
+  animation: slide 40s linear infinite;
+  width: max-content;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+/* End announcements scroll animation */

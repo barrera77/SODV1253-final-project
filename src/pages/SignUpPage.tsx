@@ -3,7 +3,7 @@ import { stockMarketLogo } from "../assets";
 
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import React, { useState } from "react";
-import { signUp } from "../Services/authService";
+import { signUp } from "../services/authService";
 
 interface UserRegistration {
   email: string;
