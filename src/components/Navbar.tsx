@@ -1,25 +1,15 @@
-import { useState } from "react";
 import { mobileStockLogo, stockMarketLogo } from "../assets";
 import { navlinks } from "../constants";
 import SearchBar from "./SearchBar";
 import { Link } from "react-router-dom";
 import { FaUser, FaWindowClose, FaBars, FaSignOutAlt } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";
+import { useNavBar } from "../hooks";
 
 const Navbar = () => {
-  const [activeLink, setActiveLink] = useState("");
-  const [active, setActive] = useState("");
-  const [toggle, setToggle] = useState(false);
-
+  const { activeLink, toggle, setToggle, setActive, handleScrollNavigation } =
+    useNavBar();
   const { user, logout } = useAuth();
-
-  const handleScrollNavigation = (id: string) => {
-    const pageSection = document.getElementById(id);
-    if (pageSection) {
-      pageSection.scrollIntoView({ behavior: "smooth" });
-      setActiveLink(id);
-    }
-  };
 
   return (
     <div className="navbar-wrapper bg-[#F9FAFBE6]">

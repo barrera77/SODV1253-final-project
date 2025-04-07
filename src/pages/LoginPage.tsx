@@ -1,37 +1,24 @@
 import { Link } from "react-router-dom";
 import { stockMarketLogo } from "../assets";
-import useAuth from "../hooks/useAuth";
 import { FaGoogle } from "react-icons/fa";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
-
-interface Inputs {
-  email: string;
-  password: string;
-}
+import { Inputs } from "../constants";
+import { useLogin } from "../hooks";
 
 const LoginPage = () => {
-  const [login, setLogin] = useState(false);
-  const { signIn, signUp, signInWithGoogle } = useAuth();
+  const { setLogin, signInWithGoogle, handleLogin, navigate } = useLogin();
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
-    console.log("Form submitted with:", email, password);
-
-    if (login) {
-      console.log("Logging in...");
-      await signIn(email, password);
-    } else {
-      console.log("Signing up...");
-      await signUp(email, password);
-    }
+    await handleLogin(email, password);
+    reset();
   };
-
   return (
     <>
       <section className="w-full md:container m-auto">
@@ -133,7 +120,7 @@ const LoginPage = () => {
                   <button
                     type="submit"
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500 cursor-pointer"
-                    onClick={() => setLogin(false)}
+                    onClick={() => navigate("/signup")}
                   >
                     Sign up now
                   </button>

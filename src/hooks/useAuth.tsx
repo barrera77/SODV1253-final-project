@@ -11,15 +11,7 @@ import {
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { auth } from "../services/fireBaseConfig";
 import { useNavigate } from "react-router-dom";
-
-interface IAuth {
-  user: User | null;
-  signUp: (email: string, password: string) => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  error: string | null;
-  loading: boolean;
-}
+import { AuthProviderProps, IAuth } from "../constants";
 
 const AuthContext = createContext<IAuth>({
   user: null,
@@ -28,11 +20,8 @@ const AuthContext = createContext<IAuth>({
   logout: async () => {},
   error: null,
   loading: false,
+  signInWithGoogle: async () => {},
 });
-
-interface AuthProviderProps {
-  children: React.ReactNode;
-}
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(false);
@@ -94,14 +83,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     setError(null);
+    setUser(null);
 
-    await signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        setUser(userCredential.user);
-        navigate("/dashboard");
-      })
-      .catch((error) => setError(error.message))
-      .finally(() => setLoading(false));
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      setUser(userCredential.user);
+      navigate("/dashboard");
+    } catch (error) {
+      window.alert("Something went wrong. Please check your credentials.");
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = async () => {

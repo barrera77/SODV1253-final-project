@@ -1,4 +1,4 @@
-import { fetchData } from "./api-client";
+/* import { fetchData } from "./api-client";
 
 export interface Ticker  {
   symbol: string;
@@ -23,4 +23,4 @@ async getTickers(): Promise<Ticker[]>  {
   
 }
 
-}
+} */

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const TradingViewChart = ({ symbol }: { symbol: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);

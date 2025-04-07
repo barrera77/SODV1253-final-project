@@ -1,71 +1,23 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { stockMarketLogo } from "../assets";
 
-import { FaFacebook, FaGoogle } from "react-icons/fa";
-import React, { useState } from "react";
-import { signUp } from "../services/authService";
+import { FaGoogle } from "react-icons/fa";
 
-interface UserRegistration {
-  email: string;
-  password: string;
-  name: string;
-}
+import { useSignUpForm } from "../hooks";
 
 const SignUpPage = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
-  const [errors, setErrors] = useState<{
-    emailError?: string;
-    passwordError?: string;
-    passwordConfirmationError?: string;
-  }>({});
-  const navigate = useNavigate();
-
-  const validateForm = (): boolean => {
-    let isValid = true;
-    const errorsList: typeof errors = {};
-
-    if (password.length < 6) {
-      errorsList.passwordError = "Password must be at least 6 characters long";
-      isValid = false;
-      console.log("invalid password error");
-    }
-    if (password !== passwordConfirmation) {
-      errorsList.passwordConfirmationError = "Passwords do not match";
-      isValid = false;
-      console.log("passwords dont match error");
-    }
-    setErrors(errorsList);
-
-    return isValid;
-  };
-
-  const handleSignUp = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    const user: UserRegistration = {
-      email,
-      password,
-      name,
-    };
-
-    try {
-      const userCredentials = await signUp(user);
-      if (!userCredentials) {
-        setErrors({ emailError: "Failed to sign up. Please check details" });
-      } else {
-        navigate("/dashboard");
-      }
-    } catch (error) {
-      setErrors({ emailError: "Sign-up error. Try again." });
-    }
-  };
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    name,
+    setName,
+    passwordConfirmation,
+    setPasswordConfirmation,
+    errors,
+    handleSignUp,
+  } = useSignUpForm();
 
   return (
     <>
@@ -133,10 +85,8 @@ const SignUpPage = () => {
                     placeholder="name@company.com"
                     value={email}
                     onChange={(event) => setEmail(event?.target.value)} // Call on change                    required
+                    required
                   />
-                  {errors.emailError && (
-                    <p className="error-text">{errors.emailError}</p>
-                  )}
                 </div>
                 <div>
                   <label

@@ -1,118 +1,22 @@
 import { FaBinoculars, FaChevronUp, FaUser } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";
 import { FaArrowTrendUp } from "react-icons/fa6";
-import { useState, useEffect } from "react";
-import { fetchData } from "../services/api-client";
 import { Link } from "react-router-dom";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../services/fireBaseConfig";
-
-const GAINERS_END_POINT = "v1/markets/screener?list=day_gainers";
-const LOSERS_END_POINT = "v1/markets/screener?list=day_losers";
-
-interface Stock {
-  region: string;
-  symbol: string;
-  fullExchangeName: string;
-  longName: string;
-  shortName: string;
-  displayName: string;
-  currency: string;
-  regularMarketPrice: number;
-  exchangeTimezoneShortName: string;
-  regularMarketTime: number;
-  regularMarketDayHigh: number;
-  regularMarketChange: number;
-  regularMarketChangePercent: number;
-  regularMarketPreviousClose: number;
-}
-
-interface SearchItem {
-  symbol: string;
-  name: string;
-  typeDisp: string;
-  exchDisp: string;
-}
+import { useTopGainers, useTopLosers, useWatchlist, useSearch } from "../hooks";
+import { Stock } from "../constants";
 
 const Dashboard = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState("");
-  const [gainers, setGainers] = useState<Stock[]>([]);
-  const [losers, setLosers] = useState<Stock[]>([]);
-  const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
-  const [watchlist, setWatchlist] = useState<Stock[]>([]);
-
   const { user } = useAuth();
-
-  const getTopGainers = async () => {
-    try {
-      const data = await fetchData(GAINERS_END_POINT);
-
-      if (!data || data.length === 0) {
-        setError("No data available");
-        return;
-      }
-
-      setGainers(data);
-    } catch {
-      setError("Failed to fetch gainers");
-      setGainers([]);
-    }
-  };
-
-  const getTopLosers = async () => {
-    try {
-      const data = await fetchData(LOSERS_END_POINT);
-
-      if (!data || data.length === 0) {
-        setError("No data available");
-        return;
-      }
-
-      setLosers(data);
-    } catch {
-      setError("Failed to fetch losers");
-      setGainers([]);
-    }
-  };
-
-  /*  //get the use input
-  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  }; */
-
-  const getSearchResults = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    console.log("getSearchResults called");
-
-    if (!searchQuery.trim()) {
-      setError("Search query cannot be empty");
-      return;
-    }
-
-    try {
-      const data = await fetchData(`v1/markets/search?search=${searchQuery}`);
-
-      if (!Array.isArray(data)) {
-        setError("Unexpected data format");
-        console.log("Unexpected data:", data);
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        setError("No data available");
-        console.log(error);
-        return;
-      }
-
-      setSearchResults(data);
-      console.log("search results: ", data);
-    } catch {
-      setError("Failed to fetch requested data");
-      setSearchResults([]);
-    }
-  };
+  const { data: gainers, error: gainersError } = useTopGainers();
+  const { data: losers, error: losersError } = useTopLosers();
+  const watchlist: Stock[] = user ? useWatchlist(user.uid) : [];
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    getSearchResults,
+    error: searchError,
+  } = useSearch();
 
   const formatTime = (epochTime?: number, timeZone?: string) => {
     if (!epochTime) {
@@ -129,33 +33,18 @@ const Dashboard = () => {
     });
   };
 
+  /**
+   * Shorten the text for display purposes
+   * @param text
+   * @param maxLength
+   * @returns
+   */
   const truncateText = (text: string, maxLength: number = 20) => {
     if (!text) return "N/A"; // Handle empty names
     return text.length > maxLength
       ? text.substring(0, maxLength) + "..."
       : text;
   };
-
-  useEffect(() => {
-    if (!user || !user.uid) return;
-
-    const watchlistRef = doc(db, "watchlists", user.uid);
-
-    const unsubscribe = onSnapshot(watchlistRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setWatchlist(docSnap.data().stocks || []);
-      } else {
-        setWatchlist([]);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [user]);
-
-  useEffect(() => {
-    //getTopGainers();
-    //getTopLosers();
-  }, []);
 
   return (
     <>

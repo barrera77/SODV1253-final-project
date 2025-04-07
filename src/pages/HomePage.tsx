@@ -1,23 +1,44 @@
-import React from "react";
-
+import { useTickers } from "../hooks";
 
 const HomePage = () => {
+  const { data, error } = useTickers();
+
   return (
     <div className="container m-auto mt-[5%]">
-      <div className="announcements flex gap-[10px] mt-[2rem] border-t border-b border-[#0b022d]">
+      <div className="announcements flex mt-[2rem] border-t border-b border-[#0b022d]">
         <div className="announcements-content pt-[.5rem]">
-          <p>FREE EXPRESS SHIPPING in orders above $200 in Canada & US</p>
-          <span>|</span>
-          <p>SHOP NOW, PAY LATER with PayPal & PayBright Canada & US</p>
-          <span>|</span>
-          <p>FREE EXPRESS SHIPPING in orders above $200 in Canada & US</p>
+          <div>
+            <ul className="flex items-center">
+              {data.map((ticker, index) => (
+                <li key={ticker.symbol} className="text-[13px]">
+                  <strong>{ticker.symbol} </strong>
+                  {ticker.lastsale}{" "}
+                  <span
+                    className={
+                      ticker.netchange >= 0 ? "text-green-500" : "text-red-500"
+                    }
+                  >
+                    {ticker.netchange}
+                  </span>
+                  ({ticker.pctchange})
+                  {index < data.length - 1 && <span className="mx-2">|</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         <div className="announcements-content pt-[.5rem]">
-          <p>FREE EXPRESS SHIPPING in orders above $200 in Canada & US</p>
-          <span>|</span>
-          <p>SHOP NOW, PAY LATER with PayPal & PayBright Canada & US</p>
-          <span>|</span>
-          <p>FREE EXPRESS SHIPPING in orders above $200 in Canada & US</p>
+          <div>
+            <ul className="flex items-center">
+              {data.map((ticker, index) => (
+                <li key={ticker.symbol} className="text-[13px]">
+                  <strong>{ticker.symbol} </strong> {ticker.lastsale}{" "}
+                  {ticker.netchange}({ticker.pctchange})
+                  {index < data.length - 1 && <span className="mx-2">|</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
       <h1>This is the fkn home page, for now that is</h1>

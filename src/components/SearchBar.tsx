@@ -1,13 +1,8 @@
-import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
+import { useSearchBar } from "../hooks";
 
 const SearchBar = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  //get the use input
-  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
+  const { searchQuery, handleSearchInput } = useSearchBar();
 
   return (
     <form className="search-wrapper w-[100%]">
