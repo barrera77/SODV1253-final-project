@@ -38,9 +38,7 @@ const Navbar = () => {
                 toggle ? "translate-x-0 " : "translate-x-full "
               } bg-[#0b022d] dropdown-menu fixed top-15 right-0 my-2 min-w-[140px] w-[100%] z-10 transition-transform duration-700 ease-in-out `}
             >
-              <div className="sm:hidden">
-                <SearchBar />
-              </div>
+              <div className="sm:hidden">{/*  <SearchBar /> */}</div>
               <ul className="list-none flex flex-col justify-center text-center">
                 {navlinks.map((link) => (
                   <li
@@ -85,7 +83,7 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="sm:w-[40%] lg:w-[35%] xs:hidden sm:block">
-          <SearchBar />
+          {/*   <SearchBar /> */}
         </div>
 
         <div className="mobile-btn-login">

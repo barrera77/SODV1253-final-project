@@ -160,7 +160,7 @@ html {
 .announcements-content {
   display: flex;
   gap: 10px;
-  animation: slide 40s linear infinite;
+  animation: slide 90s linear infinite;
   width: max-content;
 }
 

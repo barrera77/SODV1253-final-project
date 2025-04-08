@@ -2,14 +2,20 @@ import { FaBinoculars, FaChevronUp, FaUser } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import { useTopGainers, useTopLosers, useWatchlist, useSearch } from "../hooks";
+import {
+  useTopGainers,
+  useTopLosers,
+  useWatchlist,
+  useSearch,
+  useSearchBar,
+} from "../hooks";
 import { Stock } from "../constants";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { data: gainers, error: gainersError } = useTopGainers();
   const { data: losers, error: losersError } = useTopLosers();
-  const watchlist: Stock[] = user ? useWatchlist(user.uid) : [];
+  const watchlist = useWatchlist(user?.uid || "");
   const {
     searchQuery,
     setSearchQuery,
@@ -17,6 +23,8 @@ const Dashboard = () => {
     getSearchResults,
     error: searchError,
   } = useSearch();
+
+  const { searchResults: searchBarQueryResults } = useSearchBar();
 
   const formatTime = (epochTime?: number, timeZone?: string) => {
     if (!epochTime) {
@@ -54,14 +62,6 @@ const Dashboard = () => {
           <div className="flex gap-3">
             <FaUser className="text-xl" />
             {user ? <h2>{user.email}</h2> : <h2></h2>}
-          </div>
-          <div>
-            <ul className="flex gap-3">
-              <li>Porfolio</li>
-              <li>Watchlist</li>
-              <li>Top Gainers</li>
-              <li>Top Losers</li>
-            </ul>
           </div>
         </div>
         <div>
@@ -204,7 +204,28 @@ const Dashboard = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {searchResults && searchResults.length > 0 ? (
+                      {searchBarQueryResults &&
+                      searchBarQueryResults.length > 0 ? (
+                        searchBarQueryResults.map((result, index) => (
+                          <tr
+                            key={`${result.symbol}-${index}`}
+                            className="border-b border-slate-200"
+                          >
+                            <td className="p-2">{result.symbol || "N/A"}</td>
+                            <td className="p-2">{result.name || "Unknown"}</td>
+                            <td className="p-2">{result.typeDisp || "N/A"}</td>
+                            <td className="p-2">{result.exchDisp || "N/A"}</td>
+                            <td className="flex justify-center pt-2">
+                              <Link
+                                to={`/details/${result.symbol}`}
+                                className="text-center hover:text-blue-500"
+                              >
+                                <FaBinoculars className="text-xl " />
+                              </Link>
+                            </td>
+                          </tr>
+                        ))
+                      ) : searchResults && searchResults.length > 0 ? (
                         searchResults.map((result, index) => (
                           <tr
                             key={`${result.symbol}-${index}`}

@@ -37,7 +37,7 @@ export const fetchDataInRealTime = async (end_point: string) => {
     const result = await response.json();
     console.log(result);
 
-    return result.g0.data.stream_items;
+    return result.data.stream_items;
   } catch (error) {
     console.error(error);
   }

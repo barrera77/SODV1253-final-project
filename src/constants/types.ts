@@ -62,3 +62,45 @@ export interface Ticker {
   netchange: number;
   pctchange: number;
 }
+
+export interface News {
+  img: string;
+  title: string;
+  text: string;
+  source: string;
+  tickers: string[];
+  time: string;
+  ago: string;
+  link: string;
+}
+
+export interface MostActive {
+  symbolName: string;
+  percentChange: number;
+  lastPrice: number;
+  symbol: string;
+}
+
+export interface StockDetails {
+  shortName: string;
+  symbol: string;
+  quoteSourceName: string;
+  fullExchangeName: string;
+  currency: string;
+  regularMarketVolume: number;
+  averageDailyVolume3Month: number;
+  regularMarketOpen: number;
+  regularMarketPreviousClose: number;
+  marketCap: number;
+  fiftyTwoWeekLow: number;
+  epsCurrentYear: number;
+  forwardPE: number;
+  dividendDate: number;
+  postMarketPrice: number;
+  postMarketChange: number;
+  postMarketChangePercent: number;
+  postMarketTime: number;
+  regularMarketChange: number;
+  regularMarketChangePercent: number;
+  regularMarketTime: number;
+}

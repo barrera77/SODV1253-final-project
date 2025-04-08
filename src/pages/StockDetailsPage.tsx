@@ -1,108 +1,17 @@
 import useAuth from "../hooks/useAuth";
 import { addToWatchlist } from "../services/watchListService";
-import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { fetchData, fetchDataInRealTime } from "../services/api-client";
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 import TradingViewChart from "../components/TradingViewWidget";
-
-interface StockDetails {
-  shortName: string;
-  symbol: string;
-  quoteSourceName: string;
-  fullExchangeName: string;
-  currency: string;
-  regularMarketVolume: number;
-  averageDailyVolume3Month: number;
-  regularMarketOpen: number;
-  regularMarketPreviousClose: number;
-  marketCap: number;
-  fiftyTwoWeekLow: number;
-  epsCurrentYear: number;
-  forwardPE: number;
-  dividendDate: number;
-  postMarketPrice: number;
-  postMarketChange: number;
-  postMarketChangePercent: number;
-  postMarketTime: number;
-  regularMarketChange: number;
-  regularMarketChangePercent: number;
-  regularMarketTime: number;
-}
-
-interface NewsItem {
-  link: string;
-  publisher: string;
-  title: string;
-  id: string;
-  url: string;
-  pubtime: number;
-  images?: {
-    original?: {
-      url: string;
-      height: number;
-      width: number;
-    };
-  };
-}
+import { useStockNews, useStockDetails } from "../hooks";
 
 const StockDetailsPage = () => {
   const { user } = useAuth();
-
-  const [stockDetails, setStockDetails] = useState<StockDetails | null>(null);
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [error, setError] = useState("");
-
-  const { symbol } = useParams<{
-    symbol: string | undefined;
-  }>();
-
+  const { symbol } = useParams<{ symbol: string | undefined }>();
   const navigate = useNavigate();
 
-  const formatTime = (epochTime?: number, timeZone?: string) => {
-    if (!epochTime) {
-      return "N/A";
-    }
-
-    return new Date(epochTime * 1000).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      timeZone: timeZone || "America/New_York",
-      timeZoneName: "short",
-      hour12: true,
-    });
-  };
-
-  const getstockDetails = async () => {
-    if (!symbol) {
-      return;
-    }
-
-    const data = await fetchData(`yahoo/qu/quote/${symbol}`);
-
-    if (!data || data.length === 0) {
-      setError("No data available");
-      return;
-    }
-    setStockDetails(data[0]);
-  };
-
-  const getStockNews = async () => {
-    if (!symbol) {
-      return;
-    }
-    const data = await fetchDataInRealTime(
-      `get-list?lang=en-US&region=US&symbol=${symbol}`
-    );
-
-    if (!data || data.length === 0) {
-      setError("No data available");
-      return;
-    }
-    console.log(data);
-    setNews(data as NewsItem[]);
-  };
+  const { stockDetails, error } = useStockDetails(symbol);
+  const { data: news, error: newsError, randomNews: random } = useStockNews();
 
   const handleAddToWatchList = async () => {
     if (!user || !stockDetails) {
@@ -120,13 +29,23 @@ const StockDetailsPage = () => {
       regularMarketTime: stockDetails.regularMarketTime,
     });
 
-    alert("symbol Added succesfully!");
+    alert("symbol Added successfully!");
   };
 
-  useEffect(() => {
-    getstockDetails();
-    getStockNews();
-  }, [symbol]);
+  const formatTime = (epochTime?: number, timeZone?: string) => {
+    if (!epochTime) {
+      return "N/A";
+    }
+
+    return new Date(epochTime * 1000).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: timeZone || "America/New_York",
+      timeZoneName: "short",
+      hour12: true,
+    });
+  };
 
   return (
     <div className="w-full mt-[5%]">
@@ -221,14 +140,14 @@ const StockDetailsPage = () => {
             <h2 className="text-start font-semibold pt-4 px-4">News</h2>
             <div className="max-h-[800px] overflow-y-scroll p-4">
               {news && news.length > 0 ? (
-                news.map((article) => (
+                news.map((article, index) => (
                   <div
-                    key={article.id}
+                    key={index}
                     className="flex gap-2 py-3 border-b border-slate-200"
                   >
                     <div className="w-[80%]">
                       <Link
-                        to={article.url}
+                        to={article.link}
                         target="blank"
                         className="hover:text-blue-500"
                       >
@@ -237,18 +156,17 @@ const StockDetailsPage = () => {
                         </span>
                       </Link>
                       <div className="flex gap-3 text-[13px] pt-2">
-                        <span>{article.publisher}</span>•
-                        <span>{formatTime(article.pubtime)}</span>
+                        <span>{article.source}</span>•
+                        <span>{article.time}</span>
                       </div>
                     </div>
+
                     <div className="w-[20%]">
-                      {article.images?.original?.url && (
-                        <img
-                          src={article.images.original.url}
-                          alt="News Thumbnail"
-                          className="w-full h-full bg-cover"
-                        />
-                      )}
+                      <img
+                        className="w-full h-full bg-cover"
+                        src={article.img}
+                        alt="News Thumbnail"
+                      />
                     </div>
                   </div>
                 ))

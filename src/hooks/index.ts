@@ -7,3 +7,6 @@ export * from "./useSearch";
 export * from "./useSignupForm";
 export * from "./useLogin";
 export * from "./useTickers";
+export * from "./useStockNews";
+export * from "./useMostActive";
+export * from "./useStockDetails";
