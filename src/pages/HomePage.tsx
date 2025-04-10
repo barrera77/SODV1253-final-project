@@ -24,7 +24,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="container m-auto mt-[5%]">
+    <div className="container m-auto mt-[5%] lg:w-[85%]">
       <div className="announcements flex mt-[2rem] border-t border-b border-[#0b022d]">
         <div className="announcements-content pt-[.5rem]">
           <div>

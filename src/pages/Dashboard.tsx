@@ -56,7 +56,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="container m-auto mt-[5%]">
+      <div className="container m-auto mt-[5%] lg:w-[85%]">
         <h2 className="text-start font-semibold text-xl">Dashboard</h2>
         <div className="w-[75%] flex items-center justify-between py-5 mb-2">
           <div className="flex gap-3">

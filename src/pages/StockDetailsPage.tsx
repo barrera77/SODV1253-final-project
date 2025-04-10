@@ -48,7 +48,7 @@ const StockDetailsPage = () => {
   };
 
   return (
-    <div className="w-full mt-[5%]">
+    <div className="container lg:w-[85%] mt-[5%] m-auto">
       <div className="container m-auto">
         <div className="text-start mb-4">
           <button
