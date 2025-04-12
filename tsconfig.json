@@ -11,6 +11,7 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "esModuleInterop": true, // ← allows default imports from CommonJS
-    "strict": true
+    "strict": true,
+    "types": ["vitest/globals", "@testing-library/jest-dom", "vitest"]
   }
 }

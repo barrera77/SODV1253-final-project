@@ -38,6 +38,7 @@ const LoginPage = () => {
 
               <div className="flex justify-center">
                 <button
+                  id="sign-in-google"
                   onClick={signInWithGoogle}
                   className="btn flex gap-2 items-center justify-center border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff]"
                 >
@@ -110,10 +111,11 @@ const LoginPage = () => {
                 </div>
 
                 <button
+                  id="sign-in"
                   onClick={() => setLogin(true)}
                   className="cursor-pointer w-full border border-[#0b022d] hover:bg-[#0b022d] hover:text-[#fff] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
-                  Sign in
+                  Sign-in
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Don't have an account?{" "}

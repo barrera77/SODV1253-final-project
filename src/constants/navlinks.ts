@@ -14,9 +14,9 @@ export const navlinks = [
     title: "News",
     ref: "/",
   },
-  {
+  /*  {
     id: "chat",
     title: "Chat",
     ref: "/chat",
-  },
+  }, */
 ];

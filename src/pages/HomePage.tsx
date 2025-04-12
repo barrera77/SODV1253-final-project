@@ -1,12 +1,11 @@
-import { Link } from "react-router-dom";
 import { useMostActive, useTickers, useStockNews } from "../hooks";
-import React, { memo } from "react";
+import { memo } from "react";
 import { FaNewspaper } from "react-icons/fa";
 
 const HomePage = () => {
-  const { data: tickers, error: tickerError } = useTickers();
-  const { data: news, error: newsError, randomNews: random } = useStockNews();
-  const { data: mostActive, error: mostActiveError } = useMostActive();
+  const { data: tickers } = useTickers();
+  const { data: news, randomNews: random } = useStockNews();
+  const { data: mostActive } = useMostActive();
 
   console.log("mostActive: ", mostActive);
 
@@ -64,17 +63,9 @@ const HomePage = () => {
             </ul>
           </div>
         </div>
-        <div className="announcements-content pt-[.5rem]">
-          <p>FREE EXPRESS SHIPPING in orders above $200 in Canada & US</p>
-          <span>|</span>
-          <p>SHOP NOW, PAY LATER with PayPal & PayBright Canada & US</p>
-          <span>|</span>
-          <p>FREE EXPRESS SHIPPING in orders above $200 in Canada & US</p>
-        </div>
       </div>
       <div className="flex mt-8">
         {/* Left Column */}
-
         <div className="w-[75%] ">
           <div className="flex gap-4">
             {random && (

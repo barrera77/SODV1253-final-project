@@ -10,8 +10,8 @@ const StockDetailsPage = () => {
   const { symbol } = useParams<{ symbol: string | undefined }>();
   const navigate = useNavigate();
 
-  const { stockDetails, error } = useStockDetails(symbol);
-  const { data: news, error: newsError, randomNews: random } = useStockNews();
+  const { stockDetails } = useStockDetails(symbol);
+  const { data: news, randomNews: random } = useStockNews();
 
   const handleAddToWatchList = async () => {
     if (!user || !stockDetails) {

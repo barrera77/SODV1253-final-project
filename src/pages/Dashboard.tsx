@@ -1,6 +1,6 @@
 import { FaBinoculars, FaChevronUp, FaUser } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";
-import { FaArrowTrendUp } from "react-icons/fa6";
+import { FaArrowTrendUp, FaMessage } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import {
   useTopGainers,
@@ -13,8 +13,8 @@ import { Stock } from "../constants";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { data: gainers, error: gainersError } = useTopGainers();
-  const { data: losers, error: losersError } = useTopLosers();
+  const { data: gainers } = useTopGainers();
+  const { data: losers } = useTopLosers();
   const watchlist = useWatchlist(user?.uid || "");
   const {
     searchQuery,
@@ -58,10 +58,19 @@ const Dashboard = () => {
     <>
       <div className="container m-auto mt-[5%] lg:w-[85%]">
         <h2 className="text-start font-semibold text-xl">Dashboard</h2>
-        <div className="w-[75%] flex items-center justify-between py-5 mb-2">
+        <div className="w-[75%] flex items-center justify-between py-5 mb-2 pe-[7.5rem]">
           <div className="flex gap-3">
             <FaUser className="text-xl" />
             {user ? <h2>{user.email}</h2> : <h2></h2>}
+          </div>
+          <div>
+            <Link
+              to={"/chat"}
+              className="flex gap-2 items-center hover:underline"
+            >
+              <FaMessage />
+              Chat
+            </Link>
           </div>
         </div>
         <div>
@@ -346,7 +355,7 @@ const Dashboard = () => {
                       <div className="flex justify-between text-[12px]">
                         <span>{truncateText(stock.shortName, 20)}</span>
                         <span className="text-red-700">
-                          - {stock.regularMarketChange} (-
+                          {stock.regularMarketChange} (
                           {stock.regularMarketChangePercent}%)
                         </span>
                       </div>
