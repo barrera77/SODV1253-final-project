@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [initialLoading, setInitialLoading] = useState(true);
   const navigate = useNavigate();
 
   const googleProvider = new GoogleAuthProvider();
@@ -45,7 +44,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setLoading(true);
         navigate("/");
       }
-      setInitialLoading(false);
     });
 
     return () => unsubscribe();

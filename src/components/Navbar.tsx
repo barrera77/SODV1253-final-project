@@ -1,6 +1,5 @@
 import { mobileStockLogo, stockMarketLogo } from "../assets";
 import { navlinks } from "../constants";
-import SearchBar from "./SearchBar";
 import { Link } from "react-router-dom";
 import { FaUser, FaWindowClose, FaBars, FaSignOutAlt } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";

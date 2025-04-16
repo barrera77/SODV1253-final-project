@@ -11,7 +11,7 @@ const StockDetailsPage = () => {
   const navigate = useNavigate();
 
   const { stockDetails } = useStockDetails(symbol);
-  const { data: news, randomNews: random } = useStockNews();
+  const { data: news } = useStockNews();
 
   const handleAddToWatchList = async () => {
     if (!user || !stockDetails) {
@@ -30,21 +30,6 @@ const StockDetailsPage = () => {
     });
 
     alert("symbol Added successfully!");
-  };
-
-  const formatTime = (epochTime?: number, timeZone?: string) => {
-    if (!epochTime) {
-      return "N/A";
-    }
-
-    return new Date(epochTime * 1000).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      timeZone: timeZone || "America/New_York",
-      timeZoneName: "short",
-      hour12: true,
-    });
   };
 
   return (

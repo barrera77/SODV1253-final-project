@@ -16,13 +16,8 @@ const Dashboard = () => {
   const { data: gainers } = useTopGainers();
   const { data: losers } = useTopLosers();
   const watchlist = useWatchlist(user?.uid || "");
-  const {
-    searchQuery,
-    setSearchQuery,
-    searchResults,
-    getSearchResults,
-    error: searchError,
-  } = useSearch();
+  const { searchQuery, setSearchQuery, searchResults, getSearchResults } =
+    useSearch();
 
   const { searchResults: searchBarQueryResults } = useSearchBar();
 
