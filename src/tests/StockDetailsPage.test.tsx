@@ -3,7 +3,7 @@ import { describe, it, vi, beforeEach, expect } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import StockDetailsPage from "../pages/StockDetailsPage";
-import { addToWatchlist } from "../services/watchListService";
+import { addToWatchlist } from "../Services/watchListService";
 import "@testing-library/jest-dom";
 
 // Mocks

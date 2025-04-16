@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fetchData } from "../services";
+import { fetchData } from "../Services";
 import { SearchItem } from "../constants";
 
 type UseSearchProps = {

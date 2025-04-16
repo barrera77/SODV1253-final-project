@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchData } from "../services";
+import { fetchData } from "../Services";
 import { StockDetails } from "../constants";
 
 export const useStockDetails = (symbol: string | undefined) => {

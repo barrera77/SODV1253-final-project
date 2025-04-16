@@ -1,6 +1,6 @@
 import { UserRegistration, FormErrors } from "../constants";
 import { useState } from "react";
-import { signUp } from "../services";
+import { signUp } from "../Services";
 import { useNavigate } from "react-router-dom";
 
 export const useSignUpForm = () => {

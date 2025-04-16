@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchData } from "../services";
+import { fetchData } from "../Services";
 import { News } from "../constants";
 
 const NEWS_END_POINT = "v2/markets/news?tickers=SAP&type=ALL";

@@ -1,4 +1,4 @@
-import { fetchData } from "../services";
+import { fetchData } from "../Services";
 import { Ticker } from "../constants";
 import { useEffect, useState } from "react";
 

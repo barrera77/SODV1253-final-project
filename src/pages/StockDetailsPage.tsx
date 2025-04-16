@@ -1,5 +1,5 @@
 import useAuth from "../hooks/useAuth";
-import { addToWatchlist } from "../services/watchListService";
+import { addToWatchlist } from "../Services";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeft, FaPlusCircle } from "react-icons/fa";
 import TradingViewChart from "../components/TradingViewWidget";

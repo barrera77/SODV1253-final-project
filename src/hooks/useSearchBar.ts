@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { SearchItem } from "../constants";
-import { fetchData } from "../services";
+import { fetchData } from "../Services";
 
 type UseSearchBarProps = {
   searchQuery: string;
