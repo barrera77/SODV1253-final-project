@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Stock } from "../constants";
-import { fetchData } from "../services/api-client";
+import { fetchData } from "../services";
 
 const LOSERS_END_POINT = "v1/markets/screener?list=day_losers";
 

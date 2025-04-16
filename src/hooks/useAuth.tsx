@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { auth } from "../services/fireBaseConfig";
+import { auth } from "../services";
 import { useNavigate } from "react-router-dom";
 import { AuthProviderProps, IAuth } from "../constants";
 

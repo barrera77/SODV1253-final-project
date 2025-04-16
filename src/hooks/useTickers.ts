@@ -1,4 +1,4 @@
-import { fetchData } from "../services/api-client";
+import { fetchData } from "../services";
 import { Ticker } from "../constants";
 import { useEffect, useState } from "react";
 

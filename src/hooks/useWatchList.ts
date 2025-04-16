@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Stock } from "../constants";
 import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../services/fireBaseConfig";
+import { db } from "../services";
 
 export const useWatchlist = (userId: string) => {
   const [watchlist, setWatchlist] = useState<Stock[]>([]);
